@@ -1,0 +1,197 @@
+body {
+  line-height: 1.5;
+  font-size: 14px;
+  font-family: Tahoma, Arial, "Hiragino Sans GB", "\5B8B\4F53", sans-serif;
+  color: #666;
+  background-color: #fff;
+}
+.bank-beijing {
+  background: url('img/logo/beijing.png') no-repeat;
+}
+.bank-changsha {
+  background: url('img/logo/changsha.png') no-repeat;
+}
+.bank-gongshang {
+  background: url('img/logo/gongshang.png') no-repeat;
+}
+.bank-guangda {
+  background: url('img/logo/guangda.png') no-repeat;
+}
+.bank-guangfa {
+  background: url('img/logo/guangfa.png') no-repeat;
+}
+.bank-guangzhou {
+  background: url('img/logo/guangzhou.png') no-repeat;
+}
+.bank-huaxia {
+  background: url('img/logo/huaxia.png') no-repeat;
+}
+.bank-jianshe {
+  background: url('img/logo/jianshe.png') no-repeat;
+}
+.bank-jiaotong {
+  background: url('img/logo/jiaotong.png') no-repeat;
+}
+.bank-minsheng {
+  background: url('img/logo/minsheng.png') no-repeat;
+}
+.bank-nanjing {
+  background: url('img/logo/nanjing.png') no-repeat;
+}
+.bank-nongye {
+  background: url('img/logo/nongye.png') no-repeat;
+}
+.bank-pingan {
+  background: url('img/logo/pingan.png') no-repeat;
+}
+.bank-pufa {
+  background: url('img/logo/pufa.png') no-repeat;
+}
+.bank-shanghai {
+  background: url('img/logo/shanghai.png') no-repeat;
+}
+.bank-shenfa {
+  background: url('img/logo/shenfa.png') no-repeat;
+}
+.bank-xingye {
+  background: url('img/logo/xingye.png') no-repeat;
+}
+.bank-youzheng {
+  background: url('img/logo/youzheng.png') no-repeat;
+}
+.bank-zhaoshang {
+  background: url('img/logo/zhaoshang.png') no-repeat;
+}
+.bank-zhongguo {
+  background: url('img/logo/zhongguo.png') no-repeat;
+}
+.bank-zhongxin {
+  background: url('img/logo/zhongxin.png') no-repeat;
+}
+.bank-logo {
+  display: inline-block;
+  *display: inline;
+  vertical-align: middle;
+  zoom: 1;
+  width: 172px;
+  height: 36px;
+  border: 1px solid #ddd;
+  background-color: #fff;
+  cursor: pointer;
+  overflow: hidden;
+}
+.ui-bank {
+  padding: 25px;
+  background-color: #e5f5ff;
+  border-width: 1px 0;
+  border-style: dashed;
+  border-color: #ddd9c0;
+}
+.ui-bank ul {
+  font-size: 0;
+  margin-left: -10px;
+  margin-bottom: -25px;
+}
+.ui-bank li {
+  display: inline-block;
+  *display: inline;
+  vertical-align: middle;
+  zoom: 1;
+  margin-left: 30px;
+  margin-bottom: 25px;
+}
+.ui-bank .bank-radio {
+  display: inline-block;
+  *display: inline;
+  vertical-align: middle;
+  zoom: 1;
+  margin-right: 10px;
+  cursor: pointer;
+}
+.ui-bank .active .bank-logo {
+  border-color: #33a1ff;
+}
+.ui-bank-holder {
+  margin-top: 15px;
+}
+.ui-bank-holder .holder-selected {
+  margin-bottom: 20px;
+}
+.ui-bank-holder .holder-selected:before,
+.ui-bank-holder .holder-selected:after {
+  content: " ";
+  display: table;
+}
+.ui-bank-holder .holder-selected:after {
+  clear: both;
+}
+.ui-bank-holder .holder-text {
+  float: left;
+  width: 100px;
+  padding-top: 10px;
+  text-align: right;
+  font-size: 14px;
+}
+.ui-bank-holder .holder-logo {
+  float: left;
+  margin-left: 30px;
+  font-size: 0;
+}
+.ui-bank-holder .holder-hint {
+  float: left;
+  margin-top: 10px;
+  margin-left: 20px;
+  padding-left: 20px;
+  background: url('img/hint.png') no-repeat left center;
+}
+.divider {
+  height: 1px;
+  margin-bottom: 20px;
+  border-top: 1px dashed #ccc;
+  overflow: hidden;
+}
+.fill-group {
+  position: relative;
+  margin-bottom: 20px;
+}
+.fill-group .fill-label {
+  display: inline-block;
+  *display: inline;
+  vertical-align: middle;
+  zoom: 1;
+  width: 100px;
+  text-align: right;
+}
+.fill-group .fill-control {
+  display: inline-block;
+  *display: inline;
+  vertical-align: middle;
+  zoom: 1;
+  margin-left: 30px;
+  font-size: 0;
+}
+.fill-group .fill-input {
+  display: inline-block;
+  *display: inline;
+  vertical-align: middle;
+  zoom: 1;
+  width: 220px;
+  height: 20px;
+  line-height: 20px;
+  border: 1px solid #cecece;
+  padding: 6px 10px 5px;
+  font-size: 14px;
+  outline: none;
+}
+.fill-group .fill-zoom {
+  position: absolute;
+  top: -71px;
+  left: 130px;
+  z-index: 9;
+  height: 40px;
+  padding: 15px 30px;
+  color: #e2693d;
+  font-size: 26px;
+  border: 1px solid #c5c0aa;
+  background-color: #fff;
+}

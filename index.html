@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>react-bank</title>
+    <script src="../build/react.js"></script>
+    <script src="../build/JSXTransformer.js"></script>
+    <script src="../build/jquery.min.js"></script>
+    <link rel="stylesheet" href="../style.css">
+  </head>
+  <body>
+    <script type="text/jsx">
+      var Bank = React.createClass({
+        getInitialState: function() {
+          return {
+            bankList: [],
+            bank: {}
+          };
+        },
+
+        componentDidMount: function() {
+          this._fetchRemoteData();
+        },
+
+        handleChange: function(bank) {
+          // console.log(bank);
+          this.setState({bank: bank});
+        },
+
+        render: function() {
+          var banks = this.state.bankList.map(function (bank, index) {
+            var classes = 'bank-logo bank-' + bank.id;
+            var activeClass = bank.id === this.state.bank.id ? 'active' : '';
+
+            return (
+              <li key={index} className={activeClass}>
+                <label className="radio">
+                  <input className="bank-radio" type="radio" name="bank" data-id={bank.id} onChange={this.handleChange.bind(null, bank)} />
+                  <span className={classes} title={bank.name}>{bank.name}</span>
+                </label>
+              </li>
+            );
+          }, this);
+
+          var bankHolder = this.state.bank.id ? <BankHolder bank={this.state.bank} /> : '';
+
+          if (!this.state.bankList.length) {
+            return (
+              <div>Loading banks...</div>
+            );
+          }
+
+          return (
+            <div>
+              <BankListWrap>
+                {banks}
+              </BankListWrap>
+              {bankHolder}
+            </div>
+          );
+        },
+
+        _fetchRemoteData: function() {
+          setTimeout(function() {
+            $.get(this.props.dataSource, function(result) {
+              var errorNo = result.errorNo;
+              var bankList = result.bankList;
+
+              if (errorNo === 0) {
+                if (this.isMounted()) {
+                  this.setState({bankList: bankList});
+                }
+              }
+            }.bind(this));
+          }.bind(this), 1000);
+        }
+      });
+
+      var BankListWrap = React.createClass({
+        render: function() {
+          return (
+            <div className="ui-bank">
+              <ul>
+                {this.props.children}
+              </ul>
+            </div>
+          );
+        }
+      });
+
+      var BankHolder = React.createClass({
+        getInitialState: function() {
+          return {
+            no: null,
+            psw: null
+          }
+        },
+
+        handleClick: function() {
+          alert('卡号：' + this.state.no + '\n密码：' + this.state.psw)
+        },
+
+        onUpdateNo: function(no) {
+          this.setState({
+            no: no
+          });
+        },
+
+        onUpdatePSW: function(psw) {
+          this.setState({
+            psw: psw
+          });
+        },
+
+        render: function() {
+          var classes = 'bank-logo bank-' + this.props.bank.id;
+          var hint = <div className="holder-hint">{this.props.bank.hint}</div> || '';
+          var fill;
+
+          if (this.props.bank.type === '1') { // 一步式绑定
+            fill = <div>
+                      <FillGroupCardNum onUpdate={this.onUpdateNo} no={this.state.no} />
+                      <FillGroupPSW onUpdate={this.onUpdatePSW} PSW={this.state.PSW} />
+                    </div>;
+          } else if (this.props.bank.type === '2') { // 两步式绑定
+            fill = <div><FillGroupCardNum onUpdate={this.onUpdateNo} no={this.state.no} /></div>;
+          }
+
+          return (
+            <div className="ui-bank-holder">
+              <div className="holder-selected">
+                <span className="holder-text">您选择的是</span>
+                <div className="holder-logo">
+                  <span className={classes}>{this.props.bank.name}</span>
+                </div>
+                {hint}
+              </div>
+              <div className="divider"></div>
+              {fill}
+              <button type="button" onClick={this.handleClick}>提交</button>
+            </div>
+          );
+        }
+      });
+
+      var FillGroupPSW = React.createClass({
+        handleChange: function(e) {
+          this.props.onUpdate(e.target.value);
+        },
+
+        render: function() {
+          return (
+            <div className="fill-group">
+              <label htmlFor="cardPSW" className="fill-label">银行卡密码</label>
+              <div className="fill-control">
+                <input type="password" className="fill-input" id="cardPSW" onChange={this.handleChange} />
+              </div>
+            </div>
+          );
+        }
+      });
+
+      var FillGroupCardNum = React.createClass({
+        getInitialState: function() {
+          return {
+            value: '',
+            isShow: false
+          }
+        },
+
+        handleChange: function(e) {
+          this.props.onUpdate(e.target.value);
+        },
+
+        handleFocus: function(e) {
+          if (e.target.value) {
+            this.setState({
+              isShow: true
+            });
+          }
+        },
+
+        handleKeyup: function(e) {
+          var limitValue;
+
+          limitValue = e.target.value.replace(/\D/g, ''); // 不允许输入非数字内容
+          limitValue = limitValue.substr(0, 16); // 不允许输入超过 16 位数字
+
+          this.setState({
+            value: limitValue,
+            isShow: true
+          });
+
+          e.target.value = limitValue;
+        },
+
+        handleBlur: function() {
+          this.setState({
+            isShow: false
+          });
+        },
+
+        // 四位分隔显示
+        formatValue: function(value) {
+          return value.replace(/\s/g,'').replace(/(\d{4})(?=\d)/g,'$1 ');
+        },
+
+        render: function() {
+          var zoomStyle = this.state.isShow ? {} : {display: 'none'};
+          var fmtValue = this.formatValue(this.state.value);
+          var zoomLayer = this.state.value ? <div className="fill-zoom" style={zoomStyle}>{fmtValue}</div> : '';
+
+          return (
+            <div className="fill-group">
+              <label htmlFor="cardNo" className="fill-label">银行卡账号</label>
+              <div className="fill-control">
+                <input type="text" className="fill-input" id="cardNo" onFocus={this.handleFocus} onKeyUp={this.handleKeyup} onBlur={this.handleBlur} onChange={this.handleChange} />
+              </div>
+              {zoomLayer}
+            </div>
+          );
+        }
+      });
+
+      React.render(
+        <Bank dataSource="../api.json" />, document.body
+      );
+    </script>
+  </body>
+</html>
