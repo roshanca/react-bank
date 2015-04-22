@@ -35,7 +35,9 @@
             return (
               <li key={index} className={activeClass}>
                 <label className="radio">
-                  <input className="bank-radio" type="radio" name="bank" data-id={bank.id} onChange={this.handleChange.bind(null, bank)} />
+                  <input className="bank-radio" type="radio" name="bank"
+                    data-id={bank.id}
+                    onChange={this.handleChange.bind(null, bank)} />
                   <span className={classes} title={bank.name}>{bank.name}</span>
                 </label>
               </li>
@@ -97,7 +99,7 @@
         },
 
         handleClick: function() {
-          alert('卡号：' + this.state.no + '\n密码：' + this.state.psw)
+          alert('选择银行：' + this.props.bank.name + '\n输入卡号：' + this.state.no + '\n输入密码：' + this.state.psw)
         },
 
         onUpdateNo: function(no) {
@@ -137,7 +139,12 @@
               </div>
               <div className="divider"></div>
               {fill}
-              <button type="button" onClick={this.handleClick}>提交</button>
+              <div className="fill-group">
+                <span className="fill-label"></span>
+                <div className="fill-control">
+                  <button type="button" className="btn" onClick={this.handleClick}>提交</button>
+                </div>
+              </div>
             </div>
           );
         }
@@ -214,7 +221,11 @@
             <div className="fill-group">
               <label htmlFor="cardNo" className="fill-label">银行卡账号</label>
               <div className="fill-control">
-                <input type="text" className="fill-input" id="cardNo" onFocus={this.handleFocus} onKeyUp={this.handleKeyup} onBlur={this.handleBlur} onChange={this.handleChange} />
+                <input type="text" className="fill-input" id="cardNo"
+                  onFocus={this.handleFocus}
+                  onKeyUp={this.handleKeyup}
+                  onBlur={this.handleBlur}
+                  onChange={this.handleChange} />
               </div>
               {zoomLayer}
             </div>
