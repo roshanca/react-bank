@@ -13,10 +13,11 @@
   </head>
   <body>
     <script type="text/jsx">
+
       var Bank = React.createClass({
         getInitialState: function() {
           return {
-            bankList: [],
+            banks: [],
             bank: {}
           };
         },
@@ -31,36 +32,25 @@
         },
 
         render: function() {
-          var banks = this.state.bankList.map(function (bank, index) {
-            var classes = 'bank-logo bank-' + bank.id;
-            var activeClass = bank.id === this.state.bank.id ? 'active' : '';
+          var bankAfterChoose = this.state.bank.id ?
+                                  <div>
+                                    <BankHolder bank={this.state.bank} />
+                                    <BankInfoCollect bank={this.state.bank} />
+                                  </div> :
+                                  '';
 
-            return (
-              <li key={index} className={activeClass}>
-                <label className="radio">
-                  <input className="bank-radio" type="radio" name="bank"
-                    data-id={bank.id}
-                    onChange={this.handleChange.bind(null, bank)} />
-                  <span className={classes} title={bank.name}>{bank.name}</span>
-                </label>
-              </li>
-            );
-          }, this);
-
-          var bankHolder = this.state.bank.id ? <BankHolder bank={this.state.bank} /> : '';
-
-          if (!this.state.bankList.length) {
+          if (!this.state.banks.length) {
             return (
               <div>Loading banks...</div>
             );
           }
 
           return (
-            <div>
-              <BankListWrap>
-                {banks}
-              </BankListWrap>
-              {bankHolder}
+            <div id="bankComponent">
+              <BankList banks={this.state.banks}
+                        bank={this.state.bank}
+                        onChange={this.handleChange} />
+              {bankAfterChoose}
             </div>
           );
         },
@@ -69,11 +59,11 @@
           setTimeout(function() {
             $.get(this.props.dataSource, function(result) {
               var errorNo = result.errorNo;
-              var bankList = result.bankList;
+              var banks = result.bankList;
 
               if (errorNo === 0) {
                 if (this.isMounted()) {
-                  this.setState({bankList: bankList});
+                  this.setState({banks: banks});
                 }
               }
             }.bind(this));
@@ -81,12 +71,27 @@
         }
       });
 
-      var BankListWrap = React.createClass({
+      var BankList = React.createClass({
         render: function() {
           return (
             <div className="ui-bank">
               <ul>
-                {this.props.children}
+                {this.props.banks.map(function(bank, index) {
+                  var classes = 'bank-logo bank-' + bank.id;
+                  var activeClass = bank.id === this.props.bank.id ? 'active' : '';
+
+                  return (
+                    <li key={index} className={activeClass}>
+                      <label className="radio">
+                        <input className="bank-radio"
+                               type="radio"
+                               name="bank"
+                               onChange={this.props.onChange.bind(null, bank)} />
+                        <span className={classes} title={bank.name}>{bank.name}</span>
+                      </label>
+                    </li>
+                  );
+                }.bind(this))}
               </ul>
             </div>
           );
@@ -94,42 +99,9 @@
       });
 
       var BankHolder = React.createClass({
-        getInitialState: function() {
-          return {
-            no: null,
-            psw: null
-          }
-        },
-
-        handleClick: function() {
-          alert('选择银行：' + this.props.bank.name + '\n输入卡号：' + this.state.no + '\n输入密码：' + this.state.psw)
-        },
-
-        onUpdateNo: function(no) {
-          this.setState({
-            no: no
-          });
-        },
-
-        onUpdatePSW: function(psw) {
-          this.setState({
-            psw: psw
-          });
-        },
-
         render: function() {
           var classes = 'bank-logo bank-' + this.props.bank.id;
           var hint = <div className="holder-hint">{this.props.bank.hint}</div> || '';
-          var fill;
-
-          if (this.props.bank.type === '1') { // 一步式绑定
-            fill = <div>
-                      <FillGroupCardNum onUpdate={this.onUpdateNo} no={this.state.no} />
-                      <FillGroupPSW onUpdate={this.onUpdatePSW} PSW={this.state.PSW} />
-                    </div>;
-          } else if (this.props.bank.type === '2') { // 两步式绑定
-            fill = <div><FillGroupCardNum onUpdate={this.onUpdateNo} no={this.state.no} /></div>;
-          }
 
           return (
             <div className="ui-bank-holder">
@@ -140,46 +112,18 @@
                 </div>
                 {hint}
               </div>
-              <div className="divider"></div>
-              {fill}
-              <div className="fill-group">
-                <span className="fill-label"></span>
-                <div className="fill-control">
-                  <button type="button" className="btn" onClick={this.handleClick}>提交</button>
-                </div>
-              </div>
             </div>
           );
         }
       });
 
-      var FillGroupPSW = React.createClass({
-        handleChange: function(e) {
-          this.props.onUpdate(e.target.value);
-        },
-
-        render: function() {
-          return (
-            <div className="fill-group">
-              <label htmlFor="cardPSW" className="fill-label">银行卡密码</label>
-              <div className="fill-control">
-                <input type="password" className="fill-input" id="cardPSW" onChange={this.handleChange} />
-              </div>
-            </div>
-          );
-        }
-      });
-
-      var FillGroupCardNum = React.createClass({
+      var BankInfoCollect = React.createClass({
         getInitialState: function() {
           return {
             value: '',
+            passowrd: '',
             isShow: false
           }
-        },
-
-        handleChange: function(e) {
-          this.props.onUpdate(e.target.value);
         },
 
         handleFocus: function(e) {
@@ -210,6 +154,26 @@
           });
         },
 
+        handleChange: function(e) {
+          this.setState({
+            passowrd: e.target.value
+          });
+        },
+
+        // 模拟银行卡信息提交
+        handleClick: function() {
+          var cardNo = this.state.value;
+          var cardPSW = this.state.passowrd;
+
+          if (!cardNo) {
+            alert('请输入银行卡账号');
+          } else if (!cardPSW) {
+            alert('请输入银行卡密码')
+          } else {
+            alert('所选银行：' + this.props.bank.name + '\n输入卡号：' + cardNo + '\n输入密码：' + cardPSW)
+          }
+        },
+
         // 四位分隔显示
         formatValue: function(value) {
           return value.replace(/\s/g,'').replace(/(\d{4})(?=\d)/g,'$1 ');
@@ -221,24 +185,45 @@
           var zoomLayer = this.state.value ? <div className="fill-zoom" style={zoomStyle}>{fmtValue}</div> : '';
 
           return (
-            <div className="fill-group">
-              <label htmlFor="cardNo" className="fill-label">银行卡账号</label>
-              <div className="fill-control">
-                <input type="text" className="fill-input" id="cardNo"
-                  onFocus={this.handleFocus}
-                  onKeyUp={this.handleKeyup}
-                  onBlur={this.handleBlur}
-                  onChange={this.handleChange} />
+            <div>
+              <div className="divider"></div>
+              <FillGroup title="银行卡账号" id="cardNo" type="text"
+                onFocus={this.handleFocus}
+                onKeyUp={this.handleKeyup}
+                onBlur={this.handleBlur}>
+                {zoomLayer}
+              </FillGroup>
+              <FillGroup title="银行卡密码" id="cardPSW" type="password"
+                onChange={this.handleChange}></FillGroup>
+              <div className="fill-group">
+                <span className="fill-label"></span>
+                <div className="fill-control">
+                  <button type="button" className="btn" onClick={this.handleClick}>提交</button>
+                </div>
               </div>
-              {zoomLayer}
             </div>
           );
         }
       });
 
-      React.render(
-        <Bank dataSource="api.json" />, document.body
-      );
+      var FillGroup = React.createClass({
+        render: function() {
+          return (
+            <div className="fill-group">
+              <label htmlFor={this.props.id} className="fill-label">{this.props.title}</label>
+              <div className="fill-control">
+                <input type={this.props.type} className="fill-input" id={this.props.id} onChange={this.props.onChange}
+                  onFocus={this.props.onFocus}
+                  onKeyUp={this.props.onKeyUp}
+                  onBlur={this.props.onBlur} />
+                {this.props.children}
+              </div>
+            </div>
+          );
+        }
+      });
+
+      React.render(<Bank dataSource="api.json" />, document.body);
     </script>
   </body>
 </html>
