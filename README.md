@@ -1,4 +1,4 @@
 Bank Sample
 ==================
 
-this is the [demo](http://lab.roshanca.com/react-bank/).
+this is the [demo](https://lab.roshanca.com/react-bank/).
